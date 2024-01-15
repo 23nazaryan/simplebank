@@ -1,0 +1,16 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: simplebank-ingress
+spec:
+  rules:
+    - host: "aa0c12ff9855148d987233aa7aeb4ec5-1408567093.eu-north-1.elb.amazonaws.com"
+      http:
+        paths:
+          - pathType: Prefix
+            path: "/"
+            backend:
+              service:
+                name: simplebank-api-service
+                port:
+                  number: 80
