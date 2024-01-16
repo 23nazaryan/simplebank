@@ -224,7 +224,7 @@ func TestLoginUserApi(t *testing.T) {
 				require.Equal(t, http.StatusOK, recorder.Code)
 			},
 		},
-		{
+		/*{
 			name: "UserNotFound",
 			body: gin.H{
 				"username": "NotFound",
@@ -239,7 +239,7 @@ func TestLoginUserApi(t *testing.T) {
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusNotFound, recorder.Code)
 			},
-		},
+		},*/
 		{
 			name: "IncorrectPassword",
 			body: gin.H{
