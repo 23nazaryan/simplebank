@@ -6,6 +6,7 @@ package db
 
 import (
 	"context"
+
 	"github.com/google/uuid"
 )
 
@@ -31,6 +32,7 @@ type Querier interface {
 	UpdateAccount(ctx context.Context, arg UpdateAccountParams) error
 	UpdateEntry(ctx context.Context, arg UpdateEntryParams) error
 	UpdateTransfer(ctx context.Context, arg UpdateTransferParams) error
+	UpdateUser(ctx context.Context, arg UpdateUserParams) error
 }
 
 var _ Querier = (*Queries)(nil)
