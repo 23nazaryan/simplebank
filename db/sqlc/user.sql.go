@@ -7,6 +7,7 @@ package db
 
 import (
 	"context"
+	"database/sql"
 )
 
 const createUser = `-- name: CreateUser :one
@@ -58,4 +59,29 @@ func (q *Queries) GetUser(ctx context.Context, username string) (User, error) {
 		&i.CreatedAt,
 	)
 	return i, err
+}
+
+const updateUser = `-- name: UpdateUser :exec
+UPDATE users
+SET password  = coalesce($1, password),
+    full_name = coalesce($2, full_name),
+    email     = coalesce($3, email)
+WHERE username = $4
+`
+
+type UpdateUserParams struct {
+	Password sql.NullString `json:"password"`
+	FullName sql.NullString `json:"full_name"`
+	Email    sql.NullString `json:"email"`
+	Username string         `json:"username"`
+}
+
+func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) error {
+	_, err := q.db.ExecContext(ctx, updateUser,
+		arg.Password,
+		arg.FullName,
+		arg.Email,
+		arg.Username,
+	)
+	return err
 }
