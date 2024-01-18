@@ -4,7 +4,6 @@ package pb;
 
 import "google/api/annotations.proto";
 import "rpc_create_user.proto";
-import "rpc_get_user.proto";
 import "rpc_update_user.proto";
 import "rpc_login_user.proto";
 import "protoc-gen-openapiv2/options/annotations.proto";
@@ -32,16 +31,6 @@ service SimpleBank {
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
       description: "Use this API to create a new user";
       summary: "Create new user";
-    };
-  }
-  rpc GetUser (GetUserRequest) returns (GetUserResponse) {
-    option (google.api.http) = {
-      get: "/v1/get-user"
-      body: "*"
-    };
-    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      description: "Use this API to get user";
-      summary: "Get user";
     };
   }
   rpc UpdateUser (UpdateUserRequest) returns (UpdateUserResponse) {

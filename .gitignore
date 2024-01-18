@@ -23,3 +23,13 @@ go.work
 .idea
 
 *.log
+
+db/mock/*.go
+db/sqlc/*.sql.go
+db/sqlc/db.go
+db/sqlc/models.go
+db/sqlc/querier.go
+doc/statik/*.go
+doc/swagger/*.json
+pb/*.go
+doc/schema.sql

@@ -1,8 +1,5 @@
 DB_URL=postgresql://root:secret@localhost:5432/simple_bank?sslmode=disable
 
-network:
-	docker network create bank-network
-
 postgres:
 	docker run --name postgres-12 --network bank-network -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=secret -d postgres:12-alpine
 
@@ -33,9 +30,6 @@ db_schema:
 sqlc:
 	sqlc generate
 
-test:
-	go test -v -cover ./...
-
 server:
 	go run main.go
 
@@ -52,7 +46,10 @@ proto:
 		  proto/*.proto
 		  statik -src=./doc/swagger -dest=./doc
 
+test:
+	go test -v -cover ./...
+
 evans:
 	evans --host localhost --port 4000 -r repl
 
-.PHONY: network postgres createdb dropdb migrateup migrateup1 migratedown migratedown1 db_docs db_schema sqlc test server mock proto evans
+.PHONY: network postgres createdb dropdb migrateup migrateup1 migratedown migratedown1 db_docs db_schema sqlc server mock proto test evans
