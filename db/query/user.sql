@@ -6,3 +6,10 @@ VALUES ($1, $2, $3, $4) RETURNING *;
 SELECT *
 FROM users
 WHERE username = $1 LIMIT 1;
+
+-- name: UpdateUser :exec
+UPDATE users
+SET password  = coalesce(sqlc.narg(password), password),
+    full_name = coalesce(sqlc.narg(full_name), full_name),
+    email     = coalesce(sqlc.narg(email), email)
+WHERE username = sqlc.arg(username);
