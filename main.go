@@ -5,15 +5,16 @@ import (
 	"database/sql"
 	"errors"
 	"github.com/23nazaryan/simplebank/api"
+	mockdb "github.com/23nazaryan/simplebank/db/mock"
 	db "github.com/23nazaryan/simplebank/db/sqlc"
 	_ "github.com/23nazaryan/simplebank/doc/statik"
 	"github.com/23nazaryan/simplebank/gapi"
 	pb "github.com/23nazaryan/simplebank/pb"
 	"github.com/23nazaryan/simplebank/util"
-	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	_ "github.com/lib/pq"
 	"github.com/rakyll/statik/fs"
 	"google.golang.org/grpc"
@@ -124,7 +125,7 @@ func runGatewayServer(config util.Config, store db.Store) {
 	}
 }
 
-func runGinServer(config util.Config, store db.Store) {
+func runGinServer(config util.Config, store *mockdb.MockStore) {
 	server, err := api.NewServer(config, store)
 	if err != nil {
 		log.Fatal("cannot create server:", err)

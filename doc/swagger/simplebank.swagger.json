@@ -204,7 +204,12 @@
       }
     },
     "pbUpdateUserResponse": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "user": {
+          "$ref": "#/definitions/pbUser"
+        }
+      }
     },
     "pbUser": {
       "type": "object",

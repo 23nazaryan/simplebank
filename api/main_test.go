@@ -1,7 +1,7 @@
 package api
 
 import (
-	db "github.com/23nazaryan/simplebank/db/sqlc"
+	mockdb "github.com/23nazaryan/simplebank/db/mock"
 	"github.com/23nazaryan/simplebank/util"
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-func newTestServer(t *testing.T, store db.Store) *Server {
+func newTestServer(t *testing.T, store *mockdb.MockStore) *Server {
 	config := util.Config{
 		TokenSymmetricKey:   util.RandomString(32),
 		AccessTokenDuration: time.Minute,

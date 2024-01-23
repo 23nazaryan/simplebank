@@ -3,7 +3,6 @@ package gapi
 import (
 	"context"
 	"database/sql"
-	"errors"
 	db "github.com/23nazaryan/simplebank/db/sqlc"
 	pb "github.com/23nazaryan/simplebank/pb"
 	"github.com/23nazaryan/simplebank/util"
@@ -11,12 +10,22 @@ import (
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"time"
 )
 
 func (server *Server) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest) (*pb.UpdateUserResponse, error) {
+	authPayload, err := server.authorizeUser(ctx)
+	if err != nil {
+		return nil, unauthenticatedError(err)
+	}
+
 	violations := validateUpdateUserRequest(req)
 	if violations != nil {
 		return nil, invalidArgumentError(violations)
+	}
+
+	if authPayload.Username != req.GetUsername() {
+		return nil, status.Errorf(codes.PermissionDenied, "cannot update other users info: %s", err)
 	}
 
 	arg := db.UpdateUserParams{
@@ -41,25 +50,23 @@ func (server *Server) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest)
 			String: hashedPassword,
 			Valid:  true,
 		}
-	}
 
-	_, err := server.store.GetUser(ctx, req.GetUsername())
-	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			// Return 204 No Content
-			return &pb.UpdateUserResponse{}, status.New(codes.OK, "").Err()
+		arg.PasswordChangedAt = sql.NullTime{
+			Time:  time.Now(),
+			Valid: true,
 		}
-
-		return nil, status.Errorf(codes.Internal, "failed to find user: %s", err)
 	}
 
-	err = server.store.UpdateUser(ctx, arg)
+	user, err := server.store.UpdateUser(ctx, arg)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to update user: %s", err)
 	}
 
-	// Return 204 No Content
-	return nil, status.New(codes.Unknown, "No Content").Err()
+	rsp := &pb.UpdateUserResponse{
+		User: convertUser(user),
+	}
+
+	return rsp, nil
 }
 
 func validateUpdateUserRequest(req *pb.UpdateUserRequest) (violations []*errdetails.BadRequest_FieldViolation) {
