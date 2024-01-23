@@ -2,7 +2,7 @@ package api
 
 import (
 	"fmt"
-	db "github.com/23nazaryan/simplebank/db/sqlc"
+	mockdb "github.com/23nazaryan/simplebank/db/mock"
 	"github.com/23nazaryan/simplebank/token"
 	"github.com/23nazaryan/simplebank/util"
 	"github.com/gin-gonic/gin"
@@ -12,12 +12,12 @@ import (
 
 type Server struct {
 	config     util.Config
-	store      db.Store
+	store      *mockdb.MockStore
 	tokenMaker token.Maker
 	router     *gin.Engine
 }
 
-func NewServer(config util.Config, store db.Store) (*Server, error) {
+func NewServer(config util.Config, store *mockdb.MockStore) (*Server, error) {
 	tokenMaker, err := token.NewPasetoMaker(config.TokenSymmetricKey)
 	if err != nil {
 		return nil, fmt.Errorf("cannot create token maker: %w", err)

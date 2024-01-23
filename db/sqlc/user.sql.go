@@ -61,27 +61,39 @@ func (q *Queries) GetUser(ctx context.Context, username string) (User, error) {
 	return i, err
 }
 
-const updateUser = `-- name: UpdateUser :exec
+const updateUser = `-- name: UpdateUser :one
 UPDATE users
-SET password  = coalesce($1, password),
-    full_name = coalesce($2, full_name),
-    email     = coalesce($3, email)
-WHERE username = $4
+SET password            = coalesce($1, password),
+    full_name           = coalesce($2, full_name),
+    email               = coalesce($3, email),
+    password_changed_at = coalesce($4, password_changed_at)
+WHERE username = $5 RETURNING username, password, full_name, email, password_changed_at, created_at
 `
 
 type UpdateUserParams struct {
-	Password sql.NullString `json:"password"`
-	FullName sql.NullString `json:"full_name"`
-	Email    sql.NullString `json:"email"`
-	Username string         `json:"username"`
+	Password          sql.NullString `json:"password"`
+	FullName          sql.NullString `json:"full_name"`
+	Email             sql.NullString `json:"email"`
+	PasswordChangedAt sql.NullTime   `json:"password_changed_at"`
+	Username          string         `json:"username"`
 }
 
-func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) error {
-	_, err := q.db.ExecContext(ctx, updateUser,
+func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error) {
+	row := q.db.QueryRowContext(ctx, updateUser,
 		arg.Password,
 		arg.FullName,
 		arg.Email,
+		arg.PasswordChangedAt,
 		arg.Username,
 	)
-	return err
+	var i User
+	err := row.Scan(
+		&i.Username,
+		&i.Password,
+		&i.FullName,
+		&i.Email,
+		&i.PasswordChangedAt,
+		&i.CreatedAt,
+	)
+	return i, err
 }

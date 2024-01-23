@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package pb;
 
+import "user.proto";
+
 option go_package = "github.com/23nazaryan/simplebank/pg";
 
 message UpdateUserRequest {
@@ -11,4 +13,6 @@ message UpdateUserRequest {
   optional string password = 4;
 }
 
-message UpdateUserResponse {}
+message UpdateUserResponse {
+  User user = 1;
+}

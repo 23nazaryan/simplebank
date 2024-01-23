@@ -32,7 +32,7 @@ type Querier interface {
 	UpdateAccount(ctx context.Context, arg UpdateAccountParams) error
 	UpdateEntry(ctx context.Context, arg UpdateEntryParams) error
 	UpdateTransfer(ctx context.Context, arg UpdateTransferParams) error
-	UpdateUser(ctx context.Context, arg UpdateUserParams) error
+	UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error)
 }
 
 var _ Querier = (*Queries)(nil)

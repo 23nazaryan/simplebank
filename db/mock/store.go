@@ -361,11 +361,12 @@ func (mr *MockStoreMockRecorder) UpdateTransfer(arg0, arg1 interface{}) *gomock.
 }
 
 // UpdateUser mocks base method.
-func (m *MockStore) UpdateUser(arg0 context.Context, arg1 db.UpdateUserParams) error {
+func (m *MockStore) UpdateUser(arg0 context.Context, arg1 db.UpdateUserParams) (db.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateUser", arg0, arg1)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret0, _ := ret[0].(db.User)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // UpdateUser indicates an expected call of UpdateUser.
