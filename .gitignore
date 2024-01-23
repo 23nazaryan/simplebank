@@ -23,7 +23,3 @@ go.work
 .idea
 
 *.log
-
-db/mock/*.go
-doc/swagger/*.json
-doc/schema.sql
