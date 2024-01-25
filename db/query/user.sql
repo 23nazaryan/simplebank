@@ -9,8 +9,9 @@ WHERE username = $1 LIMIT 1;
 
 -- name: UpdateUser :one
 UPDATE users
-SET password            = coalesce(sqlc.narg(password), password),
-    full_name           = coalesce(sqlc.narg(full_name), full_name),
-    email               = coalesce(sqlc.narg(email), email),
-    password_changed_at = coalesce(sqlc.narg(password_changed_at), password_changed_at)
+SET password            = COALESCE(sqlc.narg(password), password),
+    full_name           = COALESCE(sqlc.narg(full_name), full_name),
+    email               = COALESCE(sqlc.narg(email), email),
+    password_changed_at = COALESCE(sqlc.narg(password_changed_at), password_changed_at),
+    is_email_verified   = COALESCE(sqlc.narg(is_email_verified), is_email_verified)
 WHERE username = sqlc.arg(username) RETURNING *;
