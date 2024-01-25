@@ -3,6 +3,7 @@ package gapi
 import (
 	"context"
 	"database/sql"
+	"errors"
 	db "github.com/23nazaryan/simplebank/db/sqlc"
 	pb "github.com/23nazaryan/simplebank/pb"
 	"github.com/23nazaryan/simplebank/util"
@@ -59,6 +60,10 @@ func (server *Server) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest)
 
 	user, err := server.store.UpdateUser(ctx, arg)
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, status.Errorf(codes.NotFound, "user not found: %s", err)
+		}
+
 		return nil, status.Errorf(codes.Internal, "failed to update user: %s", err)
 	}
 
