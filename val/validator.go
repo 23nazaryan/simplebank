@@ -21,6 +21,14 @@ func ValidateString(value string, minLength int, maxLength int) error {
 	return nil
 }
 
+func ValidateInteger(value int, minValue int, maxValue int) error {
+	if value < minValue || value > maxValue {
+		return fmt.Errorf("must contains %d-%d numbers", minValue, maxValue)
+	}
+
+	return nil
+}
+
 func ValidateUsername(value string) error {
 	if err := ValidateString(value, 3, 100); err != nil {
 		return err
@@ -59,4 +67,16 @@ func ValidateEmail(value string) error {
 	}
 
 	return nil
+}
+
+func ValidateEmailId(value int64) error {
+	if value <= 0 {
+		return fmt.Errorf("must be a positive integer")
+	}
+
+	return nil
+}
+
+func ValidateSecretCode(value int) error {
+	return ValidateInteger(value, 100000, 999999)
 }
