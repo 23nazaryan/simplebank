@@ -2,7 +2,6 @@ package db
 
 import (
 	"context"
-	"database/sql"
 	"github.com/23nazaryan/simplebank/util"
 	"github.com/stretchr/testify/require"
 	"testing"
@@ -19,7 +18,7 @@ func createRandomTransfer(t *testing.T) Transfer {
 		Amount:        util.RandomMoney(),
 	}
 
-	transfer, err := testQueries.CreateTransfer(context.Background(), arg)
+	transfer, err := testStore.CreateTransfer(context.Background(), arg)
 	require.NoError(t, err)
 	require.NotEmpty(t, transfer)
 	require.Equal(t, transfer.FromAccountID, arg.FromAccountID)
@@ -37,7 +36,7 @@ func TestQueries_CreateTransfer(t *testing.T) {
 
 func TestQueries_GetTransfer(t *testing.T) {
 	transfer1 := createRandomTransfer(t)
-	transfer2, err := testQueries.GetTransfer(context.Background(), transfer1.ID)
+	transfer2, err := testStore.GetTransfer(context.Background(), transfer1.ID)
 	require.NoError(t, err)
 	require.NotEmpty(t, transfer2)
 	require.Equal(t, transfer1.ID, transfer2.ID)
@@ -54,9 +53,9 @@ func TestQueries_UpdateTransfer(t *testing.T) {
 		Amount: util.RandomMoney(),
 	}
 
-	err := testQueries.UpdateTransfer(context.Background(), arg)
+	err := testStore.UpdateTransfer(context.Background(), arg)
 	require.NoError(t, err)
-	transfer2, err := testQueries.GetTransfer(context.Background(), transfer1.ID)
+	transfer2, err := testStore.GetTransfer(context.Background(), transfer1.ID)
 	require.NoError(t, err)
 	require.NotEmpty(t, transfer2)
 	require.Equal(t, transfer1.ID, transfer2.ID)
@@ -68,11 +67,11 @@ func TestQueries_UpdateTransfer(t *testing.T) {
 
 func TestQueries_DeleteTransfer(t *testing.T) {
 	transfer1 := createRandomTransfer(t)
-	err := testQueries.DeleteTransfer(context.Background(), transfer1.ID)
+	err := testStore.DeleteTransfer(context.Background(), transfer1.ID)
 	require.NoError(t, err)
-	transfer2, err := testQueries.GetTransfer(context.Background(), transfer1.ID)
+	transfer2, err := testStore.GetTransfer(context.Background(), transfer1.ID)
 	require.Error(t, err)
-	require.EqualError(t, err, sql.ErrNoRows.Error())
+	require.EqualError(t, err, ErrRecordNotFound.Error())
 	require.Empty(t, transfer2)
 }
 
@@ -86,7 +85,7 @@ func TestQueries_ListTransfers(t *testing.T) {
 		Offset: 5,
 	}
 
-	transfers, err := testQueries.ListTransfers(context.Background(), arg)
+	transfers, err := testStore.ListTransfers(context.Background(), arg)
 	require.NoError(t, err)
 	require.Len(t, transfers, 5)
 

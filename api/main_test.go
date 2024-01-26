@@ -4,7 +4,6 @@ import (
 	mockdb "github.com/23nazaryan/simplebank/db/mock"
 	"github.com/23nazaryan/simplebank/util"
 	"github.com/gin-gonic/gin"
-	_ "github.com/lib/pq"
 	"github.com/stretchr/testify/require"
 	"os"
 	"testing"
